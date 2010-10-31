@@ -15,14 +15,15 @@ sub add_comment {
     my $bug_number = shift;
     my $comment = shift;
 
-    git-bugz-comment $bug_number "$comment";
+    my $result = `git-bugz-comment "$bug_number" "$comment"`;
+    print "$result\n";
 }
 
 # Define a function to add git notes to each bug it modifies
 sub process_commit {
     my $commit_id = shift;
 
-    print "Proccessing message for commit $commit_id\n";
+#    print "Proccessing message for commit $commit_id\n";
 
     my $commit_msg = `git whatchanged -n 1 $oldrev..$newrev`;
 #print "base commit_msg=$commit_msg\n";
@@ -42,7 +43,8 @@ sub process_commit {
     my $bug_regex = 'bug\s*(?:#|)\s*(?P<bug>\d+)';
     my (@bug_numbers) = uniq(sort( $commit_msg =~ /$bug_regex/gi ));
 
-    my $comment = "----------------------------------------
+    my $comment = "
+----------------------------------------
 $author committed $refname
 \t($newrev)
 Tagged with:\n";
