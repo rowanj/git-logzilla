@@ -109,11 +109,11 @@ my $bugid = shift @ARGV
 my $comment = shift @ARGV
     or print STDERR "No comment specified!\n" and usage 1;
 
-print STDERR "Preparing to comment \"$comment\" on bug $bugid...";
+#print STDERR "Preparing to comment \"$comment\" on bug $bugid...";
 
 authenticate $username, $password;
 
-print STDERR "Making Bugzilla changes...\n";
+print STDERR "Adding comment to $bugid...\n";
 
 add_comment $bugid, $comment;
 

@@ -55,7 +55,12 @@ Tagged with:\n";
     $comment .= "$commit_msg";
     $comment .= "----------------------------------------
 Paths changed:\n";
-    $comment .= join("", @filelist) . "\n----------------------------------------\n";
+
+    foreach my $file(@filelist) {
+	$comment .= "\t$file\n";
+    }
+
+    $comment .= "\n----------------------------------------\n";
 
     foreach my $bug_number(@bug_numbers) {
 	add_comment($bug_number, $comment);
