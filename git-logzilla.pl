@@ -64,9 +64,6 @@ sub add_comment {
 	$mech->submit;
 	die "Comment failed: ", $mech->res->status_line
 		unless $mech->success;
-
-	die "Error while creating comment. Aborting\n"
-		unless $mech->title =~ /Changes Submitted/i;
 }
 
 sub read_repo_config {
