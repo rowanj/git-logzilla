@@ -36,7 +36,7 @@ sub authenticate {
 		print "\n";
 	}
 
-	print STDERR "Logging in as $username...\n";
+#	print STDERR "Logging in as $username...\n";
 	$mech->get("$url/index.cgi?GoAheadAndLogIn=1");
 	die "Can't fetch login form: ", $mech->res->status_line
 		unless $mech->success;
@@ -113,8 +113,8 @@ my $comment = shift @ARGV
 
 authenticate $username, $password;
 
-print STDERR "Adding comment to $bugid...\n";
+print STDERR "Adding comment to bug $bugid... ";
 
 add_comment $bugid, $comment;
 
-print "Done.\n"
+print STDERR "done.\n"
