@@ -16,7 +16,7 @@ sub add_comment {
     my $comment = shift;
 
     my $result = `git-bugz-comment "$bug_number" "$comment"`;
-    print "$result\n";
+#    print "$result\n";
 }
 
 # Define a function to add git notes to each bug it modifies
