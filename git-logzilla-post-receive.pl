@@ -40,7 +40,7 @@ sub process_commit {
     $commit_msg =~ s/^.*?Date://s;# eat everything till the Date: header
     $commit_msg =~ s/^.*?\n//m;# eat the date line completely
     $commit_msg =~ s/^:.*?$//mg;# eat the file list from the msg.
-    chomp $commit_msg;
+    $commit_msg =~ s/^\s+|\s+$//g ;# strip leading and trailing whitespace
 
     my $bug_regex = 'bug\s*(?:#|)\s*(?P<bug>\d+)';
     my (@bug_numbers) = uniq(sort( $commit_msg =~ /$bug_regex/gi ));
@@ -53,16 +53,16 @@ Tagged with:\n";
     foreach my $bug_number(@bug_numbers) {
 	$comment .= "\tbug $bug_number\n";
     }
-    $comment .= "----------------------------------------";
-    $comment .= "$commit_msg";
-    $comment .= "----------------------------------------
-Paths changed:\n";
+    $comment .= "----------------------------------------\n";
+    $comment .= "$commit_msg\n";
+    $comment .= "----------------------------------------\n";
+    $comment .= "Changes:\n";
 
     foreach my $file(@filelist) {
 	$comment .= "\t$file\n";
     }
 
-    $comment .= "\n----------------------------------------\n";
+    $comment .= "----------------------------------------\n";
 
     foreach my $bug_number(@bug_numbers) {
 	add_comment($bug_number, $comment);
