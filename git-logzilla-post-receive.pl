@@ -46,23 +46,31 @@ sub process_commit {
     my $bug_regex = 'bug\s*(?:#|)\s*(?P<bug>\d+)';
     my (@bug_numbers) = uniq(sort( $commit_msg =~ /$bug_regex/gi ));
 
-    my $comment = "----------------------------------------
+    my $bug_list;
+    foreach my $bug_number(@bug_numbers) {
+	$bug_list .= "\tbug $bug_number\n";
+    }
+    chomp $bug_list;
+
+    my $change_list;
+    foreach my $file(@filelist) {
+	$change_list .= "\t$file\n";
+    }
+    chomp $change_list;
+
+    my $comment = <<END;
+----------------------------------------
 $author committed $refname
 \t($commit_id)
-Tagged with:\n";
-    foreach my $bug_number(@bug_numbers) {
-	$comment .= "\tbug $bug_number\n";
-    }
-    $comment .= "----------------------------------------\n";
-    $comment .= "$commit_msg\n";
-    $comment .= "----------------------------------------\n";
-    $comment .= "Changes:\n";
-
-    foreach my $file(@filelist) {
-	$comment .= "\t$file\n";
-    }
-
-    $comment .= "----------------------------------------\n";
+Tagged with:
+$bug_list
+----------------------------------------
+$commit_msg
+----------------------------------------
+Changes:
+$change_list
+----------------------------------------
+END
 
     foreach my $bug_number(@bug_numbers) {
 	add_comment($bug_number, $comment);
