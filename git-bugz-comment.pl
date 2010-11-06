@@ -103,17 +103,22 @@ GetOptions("url|b=s" => \$url,
 
 exec 'man', 1, 'git-logzilla' if $help;
 
+# read bug ID from comment
 my $bugid = shift @ARGV
     or print STDERR "No bug id specified!\n" and usage 1;
 
+# would be good to read a list of all bug IDs to add this comment to
+# to save auth delay for each one.
+
+# read comment from STDIN until the pipe is closed (EOF)
 my $line;
 my $comment;
 while (defined($line = <STDIN>)) {
     $comment .= $line;
 }
 
-print STDERR "Preparing to comment \"$comment\" on bug $bugid...\n";
-exit;
+#print STDERR "Preparing to comment \"$comment\" on bug $bugid...\n";
+#exit;
 
 authenticate $username, $password;
 
