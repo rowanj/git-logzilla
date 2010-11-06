@@ -84,7 +84,7 @@ sub read_repo_config {
 sub usage {
 	my $exitcode = shift || 0;
 	my $fd = $exitcode ? \*STDERR : \*STDOUT;
-	print $fd "Usage: git-logzilla [options] <bugid> <comment>\n";
+	print $fd "Usage: git-logzilla [options] <bugid>\n\tThe comment to be submitted should be passed on STDIN\n";
 	exit $exitcode;
 }
 
@@ -106,10 +106,14 @@ exec 'man', 1, 'git-logzilla' if $help;
 my $bugid = shift @ARGV
     or print STDERR "No bug id specified!\n" and usage 1;
 
-my $comment = shift @ARGV
-    or print STDERR "No comment specified!\n" and usage 1;
+my $line;
+my $comment;
+while (defined($line = <STDIN>)) {
+    $comment .= $line;
+}
 
-#print STDERR "Preparing to comment \"$comment\" on bug $bugid...";
+print STDERR "Preparing to comment \"$comment\" on bug $bugid...\n";
+exit;
 
 authenticate $username, $password;
 

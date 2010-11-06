@@ -15,9 +15,10 @@ sub add_comment {
     my $bug_number = shift;
     my $comment = shift;
 
-#    print("git-bugz-comment \"$bug_number\" \"$comment\"");
-    my $result = `git-bugz-comment "$bug_number" "$comment"`;
-#    print "$result\n";
+#    print STDERR "Hook: adding comment \"$comment\" to bug $bug_number\n";
+    open(COMMENT_PIPE, "|-") || exec 'git-bugz-comment', "$bug_number";
+    print COMMENT_PIPE "$comment";
+    close(COMMENT_PIPE);
 }
 
 # Define a function to add git notes to each bug it modifies
@@ -45,8 +46,7 @@ sub process_commit {
     my $bug_regex = 'bug\s*(?:#|)\s*(?P<bug>\d+)';
     my (@bug_numbers) = uniq(sort( $commit_msg =~ /$bug_regex/gi ));
 
-    my $comment = "
-----------------------------------------
+    my $comment = "----------------------------------------
 $author committed $refname
 \t($commit_id)
 Tagged with:\n";
