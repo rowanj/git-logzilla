@@ -51,7 +51,7 @@ sub process_commit {
 
     my $change_list;
     foreach my $change(@filelist) {
-	$change =~ s/^:([0-7]{6}\s[0-7]{6})\s.*\s([MCRADU])[0-9]*\s(.*)$/$2 ($1)\n\t$3\n/;
+	$change =~ s/^:[0-7]{6}\s[0-7]{6}\s.*\s([MCRADU])[0-9]*\s(.*)$/$1 $2\n/;
 	$change_list .= $change;
     }
     chomp $change_list;
@@ -62,13 +62,13 @@ $author committed $commit_refname
 
 $commit_msg
 
---
 Changed:
 $change_list
---
-Tagged with:
-$bug_list
 END
+
+    if (scalar(@bug_numbers) > 1) {
+	$comment .= "Referenced bugs:\n$bug_list";
+    }
 
     foreach my $bug_number(@bug_numbers) {
 	add_comment($bug_number, $comment);
