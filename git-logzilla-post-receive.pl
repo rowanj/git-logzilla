@@ -50,8 +50,9 @@ sub process_commit {
     chomp $bug_list;
 
     my $change_list;
-    foreach my $file(@filelist) {
-	$change_list .= "\t$file\n";
+    foreach my $change(@filelist) {
+	$change =~ s/^:([0-7]{6}\s[0-7]{6})\s.*\s([MCRADU])[0-9]*\s(.*)$/$2 ($1)\n\t$3\n/;
+	$change_list .= $change;
     }
     chomp $change_list;
 
