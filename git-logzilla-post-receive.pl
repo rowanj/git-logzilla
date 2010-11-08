@@ -6,11 +6,6 @@ use strict;
 
 use List::MoreUtils qw(uniq);
 
-my $input = <>;
-chomp $input;
-
-my ($oldrev, $newrev, $refname) = split /\s+/, $input;
-
 sub add_comment {
     my $bug_number = shift;
     my $comment = shift;
@@ -24,6 +19,8 @@ sub add_comment {
 # Define a function to add git notes to each bug it modifies
 sub process_commit {
     my $commit_info = shift;
+    my $commit_refname = shift;
+
     my $commit_id = ((split(/\s+/,$commit_info))[0]);
 
 #    print "Proccessing message for commit $commit_id\n";
@@ -59,17 +56,17 @@ sub process_commit {
     chomp $change_list;
 
     my $comment = <<END;
-----------------------------------------
-$author committed $refname
+$author committed $commit_refname
 \t($commit_id)
+
+$commit_msg
+
+--
+Changed:
+$change_list
+--
 Tagged with:
 $bug_list
-----------------------------------------
-$commit_msg
-----------------------------------------
-Changes:
-$change_list
-----------------------------------------
 END
 
     foreach my $bug_number(@bug_numbers) {
@@ -77,13 +74,24 @@ END
     }
 }
 
-# Get a list of all commits being added
-my $commit_list = `git log --pretty=oneline $oldrev..$newrev`;
-my @commits = reverse(split("\n", $commit_list));
+# for each ref that's being updated
+# we get the previous HEAD, the new HEAD, and the name of the ref
+# read lines from STDIN until the pipe is closed (EOF)
+my $line;
+while (defined($line = <STDIN>)) {
+    chomp $line;
+    my ($oldrev, $newrev, $refname) = split /\s+/, $line;
 
-foreach my $commit(@commits) {
-    process_commit($commit);
+    my $commit_list = `git log --pretty=oneline $oldrev..$newrev`;
+    my @commits = reverse(split("\n", $commit_list));
+
+    foreach my $commit(@commits) {
+	if ($refname == "refs/heads/master") {
+	    process_commit($commit, $refname);
+	} else {
+	    print "Ignoring update on $refname";
+	}
+    }
 }
+exit;
 
-exit 0;
-# 
