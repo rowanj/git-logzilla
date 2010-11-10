@@ -90,7 +90,7 @@ while (defined($line = <STDIN>)) {
 	if ($refname eq "refs/heads/master") {
 	    process_commit($commit, $refname);
 	} else {
-	    print "Ignoring update on $refname";
+#	    print "Ignoring Bugzilla hook for update on $refname\n";
 	}
     }
 }
