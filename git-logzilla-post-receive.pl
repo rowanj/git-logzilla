@@ -87,7 +87,7 @@ while (defined($line = <STDIN>)) {
     my @commits = reverse(split("\n", $commit_list));
 
     foreach my $commit(@commits) {
-	if ($refname == "refs/heads/master") {
+	if ($refname eq "refs/heads/master") {
 	    process_commit($commit, $refname);
 	} else {
 	    print "Ignoring update on $refname";
