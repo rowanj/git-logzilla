@@ -82,16 +82,18 @@ my $line;
 while (defined($line = <STDIN>)) {
     chomp $line;
     my ($oldrev, $newrev, $refname) = split /\s+/, $line;
+    if ($refname ne "refs/heads/master") {
+	# skip updates that aren't on master
+	# For branches, they'll be processed when (if) they're merged
+	# for tags, etc. we don't want to process them anyway.
+	next;
+    }
 
     my $commit_list = `git log --pretty=oneline $oldrev..$newrev`;
     my @commits = reverse(split("\n", $commit_list));
 
     foreach my $commit(@commits) {
-	if ($refname eq "refs/heads/master") {
-	    process_commit($commit, $refname);
-	} else {
-#	    print "Ignoring Bugzilla hook for update on $refname\n";
-	}
+	process_commit($commit, $refname);
     }
 }
 exit;
